@@ -28,7 +28,12 @@ if (!users.admin) {
 const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
 const artifact = {
   abi: JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'artifacts', 'contracts_MarketplaceNFT_sol_MarketplaceNFT.abi'))),
-  bytecode: fs.readFileSync(path.join(__dirname, '..', 'artifacts', 'contracts_MarketplaceNFT_sol_MarketplaceNFT.bin')).toString()
+  bytecode: '0x' +
+    fs.readFileSync(
+      path.join(__dirname, '..', 'artifacts', 'contracts_MarketplaceNFT_sol_MarketplaceNFT.bin')
+    )
+      .toString()
+      .trim()
 };
 
 let contractAddress = '';
