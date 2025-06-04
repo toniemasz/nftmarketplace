@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+<title>Market</title>
+</head>
+<body>
+<nav>
+<a href="index.html">Home</a>
+<a href="wallet.html">My Wallet</a>
+<a href="market.html">Market</a>
+<a href="#" id="logout">Logout</a>
+</nav>
+<section>
+<h2>Market</h2>
+<ul id="market"></ul>
+</section>
+<script>
+async function load(){
+ const res = await fetch('/market');
+ const items = await res.json();
+ const list=document.getElementById('market');
+ list.innerHTML='';
+ items.forEach(it=>{
+  const li=document.createElement('li');
+  li.textContent=`Token ${it.tokenId} - price ${it.price} owner ${it.owner}`;
+  const btn=document.createElement('button');
+  btn.textContent='Buy';
+  btn.onclick=async()=>{await fetch('/buy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tokenId:it.tokenId,seller:it.owner})});load();};
+  li.appendChild(btn);
+  list.appendChild(li);
+ });
+}
+load();
+document.getElementById('logout').onclick = async ()=>{await fetch('/logout');location.href='index.html';};
+</script>
+</body>
+</html>
