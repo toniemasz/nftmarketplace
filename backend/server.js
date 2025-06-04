@@ -11,6 +11,19 @@ let users = {};
 if (fs.existsSync(usersPath)) {
   users = JSON.parse(fs.readFileSync(usersPath));
 }
+const defaultAdminKey =
+  '0x59c6995e998f97a5a0044966f09453857fd50e9975666a6adafc3a9814f07434';
+if (!users.admin) {
+  const wallet = new ethers.Wallet(defaultAdminKey);
+  users.admin = {
+    address: wallet.address,
+    privateKey: wallet.privateKey,
+    password: bcrypt.hashSync('admin', 10),
+    balance: ethers.parseEther('10000').toString(),
+    owned: []
+  };
+  fs.writeFileSync(usersPath, JSON.stringify(users, null, 2));
+}
 
 const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
 const artifact = {

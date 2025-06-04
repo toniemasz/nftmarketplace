@@ -25,4 +25,6 @@ This project is a minimal demonstration of an NFT marketplace using a Solidity c
    ```
 4. Open `http://localhost:3000` in the browser.
 
-New users can register via the homepage. The admin account is used to deploy the contract when the server starts.
+New users can register via the homepage. The server will automatically
+create an `admin` account in `backend/users.json` if none exists and use
+it to deploy the contract when starting.
