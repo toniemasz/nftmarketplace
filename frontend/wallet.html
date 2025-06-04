@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+<title>My Wallet</title>
+</head>
+<body>
+<nav>
+<a href="index.html">Home</a>
+<a href="wallet.html">My Wallet</a>
+<a href="market.html">Market</a>
+<a href="#" id="logout">Logout</a>
+</nav>
+<section>
+<h2>Wallet</h2>
+<div id="info"></div>
+<button id="mint">Mint NFT</button>
+<ul id="nfts"></ul>
+</section>
+<script>
+async function load(){
+ const res = await fetch('/me');
+ if(!res.ok){ location.href='index.html'; return; }
+ const data = await res.json();
+ document.getElementById('info').innerText=`Address: ${data.address}\nBalance: ${data.balance}`;
+ const list=document.getElementById('nfts');
+ list.innerHTML='';
+ data.owned.forEach(n=>{
+  const li=document.createElement('li');
+  li.textContent=`Token ${n.tokenId} ${n.forSale?'(for sale '+n.price+')':''}`;
+  if(!n.forSale){
+   const btn=document.createElement('button');
+   btn.textContent='List for sale';
+   btn.onclick=async()=>{const price=prompt('Price?'); if(!price)return; await fetch('/list',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tokenId:n.tokenId,price})}); load();};
+   li.appendChild(btn);
+  }else{
+   const btn=document.createElement('button');
+   btn.textContent='Cancel';
+   btn.onclick=async()=>{await fetch('/cancel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tokenId:n.tokenId})});load();};
+   li.appendChild(btn);
+  }
+  list.appendChild(li);
+ });
+}
+
+load();
+
+document.getElementById('mint').onclick=async()=>{await fetch('/mint',{method:'POST'});load();};
+document.getElementById('logout').onclick = async ()=>{await fetch('/logout');location.href='index.html';};
+</script>
+</body>
+</html>
